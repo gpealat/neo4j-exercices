@@ -1,0 +1,11 @@
+// Build the same query as above but show the result as a table and not as a graph (table or text 
+// format) displaying the fields:
+// - Virus_spreader
+// - Start_virus_spreading
+// - Establishment
+// - Person_at_risk
+// - Start_visit_person_at_risk
+
+MATCH (i:Person {person_name:'Maxwell Ramirez'})-[vi:VISITED]->(l:Location)<-[vh:VISITED]-(p: Person {health_status:'Healthy'})
+WHERE vh.start_time >= vi.end_time
+RETURN i.person_name AS Virus_spreader, vi.start_time AS Start_virus_spreading, l.name AS Establishment, p.person_name AS Person_at_risk, vh.start_time AS Start_visit_person_at_risk
