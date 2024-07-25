@@ -1,0 +1,6 @@
+// Find those individuals (if any) who visited an establishment even after knowing they had tested 
+// positive.
+
+MATCH (p:Person {health_status:'Infected'})-[v:VISITED]->(l:Location)
+WHERE p.test_result_time<=v.start_time
+RETURN p.person_name AS Person, l.location AS Location, v.start_time AS Visit_time
