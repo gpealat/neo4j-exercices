@@ -1,0 +1,6 @@
+//Identify the number of infected and healthy people in the sample of 40 individuals. Return the result in table or text format.
+
+MATCH (p:Person)
+WHERE p.health_status IN ['Healthy', 'Infected']
+RETURN p.health_status AS Status, COUNT(p) AS NumberOfPeople
+ORDER BY p.health_status;
