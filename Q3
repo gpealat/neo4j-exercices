@@ -1,0 +1,9 @@
+// Show a graph with healthy individuals who have coincided with an infected person, specifically 
+// with "Maxwell Ramirez." Display this person's node along with all the places visited and nodes of 
+// healthy individuals who have also visited that place afterward. Based on the graph results, 
+// comment on six individuals who have been in a location where Marcelino has been afterward; 
+//they have less risk than the rest of being infected.
+
+MATCH (i:Person {person_name:'Maxwell Ramirez'})-[vi:VISITED]->(l:Location)<-[vh:VISITED]-(p: Person {health_status:'Healthy'})
+WHERE vh.start_time >= vi.end_time
+RETURN p,l,i
