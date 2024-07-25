@@ -1,0 +1,19 @@
+// Build a table (text and table format) that identifies for each infected person (first column), the 
+// healthy individuals with whom they have coincided in an establishment at the same time. Build as 
+// the second column an array of JSON elements called "Contacts" with keys:
+// - Person_in_contact
+// - Establishment
+// - Start_date_overlap
+// - End_date_overlap
+
+MATCH (infected:Person {health_status:'Infected'})-[vi:VISITED]->(loc)<-[vh:VISITED]-(healthy:Person {health_status:'Healthy'}) 
+WHERE vi.start_time<=vh.end_time AND vi.end_time>=vh.start_time
+RETURN infected.person_name AS Infected, healthy.person_name AS Person_in_contact, loc.name AS Establishment, 
+    CASE
+        WHEN vi.start_time >= vh.start_time THEN vi.start_time
+        ELSE vh.start_time
+    END AS Start_date_overlap,
+    CASE
+        WHEN vi.end_time >= vh.end_time THEN vh.end_time
+        ELSE vi.end_time
+    END AS End_date_overlap
