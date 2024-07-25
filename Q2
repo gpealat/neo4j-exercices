@@ -1,0 +1,9 @@
+// Find healthy individuals who have been in contact with a person who tested positive. Due to 
+// being in the early stages of studying the disease, it is assumed that COVID can infect healthy 
+// individuals who have been in the same place as an infected person, even on different days. 
+// Identify all healthy individuals who have been in the same place (regardless of date or time) where 
+// an infected person has been. Return the result in table or text format.
+
+MATCH (p:Person {health_status:'Infected'})-[r:VISITED]->(l:Location)<-[v:VISITED]-(p2:Person {health_status:'Healthy'})
+WHERE v.end_time >= r.start_time
+RETURN p.person_name AS InfectedPerson, p2.person_name AS HealthyPerson, l.name AS Location, r.end_time AS InfectedLeft, v.start_time AS HealthyArrived
