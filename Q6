@@ -1,0 +1,9 @@
+// Once the previous query is obtained, by adding three statements to it, obtain a table that has 
+// the name of the infected person and another column with the number of healthy individuals they 
+// have had contact with, obtaining that number from the elements of the JSON array. Order the 
+// results by "Number_of_healthy_contacts" in descending order.
+
+MATCH (infected:Person {health_status:'Infected'})-[vi:VISITED]->(loc)<-[vh:VISITED]-(healthy:Person {health_status:'Healthy'}) 
+WHERE vi.start_time<=vh.end_time AND vi.end_time>=vh.start_time
+RETURN infected.person_name AS Infected, COUNT(healthy.person_name) AS Number_of_healthy_contacts
+ORDER BY Number_of_healthy_contacts DESC
