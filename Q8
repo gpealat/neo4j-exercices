@@ -1,0 +1,5 @@
+// Now that all healthy individuals who coincided in any establishment with an infected person 
+// have been obtained, it is desired to find out the exact time (duration) that each healthy person 
+// coincided with person p1. Express the duration in hours and rounded to four decimals. Return the 
+// result in table or text format
+
