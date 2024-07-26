@@ -1,0 +1,18 @@
+// It is intended to try to reduce attendance and implement even more precautionary measures in 
+// those establishments where infected individuals have spent more time. 
+// Please return a table that contains 
+// each establishment, visited by at least one infected person, 
+// the total visits of infected individuals in each establishment, 
+// the total visits in each establishment, 
+// the percentage of visits by infected individuals relative to the total visits to each establishment, 
+//and the city to which the establishment belongs.
+
+//Express the percentage rounded to two decimals. Comment on the two 
+// establishments with the highest and the two with the lowest percentage of visits by infected 
+// individuals relative to the total for each establishment
+
+MATCH (p:Person)-[:VISITED]->(l:Location)
+WITH DISTINCT (l.name) AS location, COUNT(*) AS NumberOfVisits
+MATCH (infected:Person {health_status:'Infected'})-[:VISITED]->(l1:Location {name:location})
+WITH DISTINCT(l1.name) AS LocationName, COUNT(*) AS NumberOfInfectedVisits, NumberOfVisits
+RETURN LocationName, NumberOfInfectedVisits, NumberOfVisits,ROUND(100* NumberOfInfectedVisits/NumberOfVisits,2)/100 AS PercentageInfectedVisits
