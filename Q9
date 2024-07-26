@@ -1,0 +1,29 @@
+// A person has been in two different places with infected individuals; in one, they were in contact 
+// for an hour and a half, and in the other, for two hours. The total exposure of that person will have 
+// been three and a half hours. The duration of each contact between a healthy person and an 
+// infected person will be the result obtained in the previous question. Therefore, you can use the 
+// previous query as a base and add something more to get the expected result. If a healthy person 
+// coincided with two infected individuals on the same day in the same establishment, the time 
+// spent in contact with each infected person will also be added, understanding that being 
+// surrounded by more infected individuals implies a higher risk of contracting the disease. Only the 
+// top five healthy individuals with the most exposure time will be shown in the table (table or text 
+// format). For those five individuals, an immediate call will be made to start quarantine. The total 
+// time will be displayed in hours rounded to four decimals (for example: 9.4972 hours, which will be 
+// nine hours and 30 minutes).
+
+MATCH (infected:Person {health_status:'Infected'})-[vi:VISITED]->(loc)<-[vh:VISITED]-(healthy:Person {health_status:'Healthy'}) 
+WHERE vi.start_time<=vh.end_time AND vi.end_time>=vh.start_time
+WITH vi,vh,infected,loc,healthy,
+     duration.between(vi.start_time, vi.end_time) AS duration1,
+     duration.between(vi.start_time, vh.end_time) AS duration2,
+     duration.between(vh.start_time, vh.end_time) AS duration3,
+     duration.between(vh.start_time,vi.end_time) AS duration4
+WITH infected.person_name AS Infected, healthy.person_name AS Person_in_contact, loc.name AS Location, 
+    CASE
+        WHEN duration1 < duration2 AND duration1 < duration3 AND duration1 < duration4 THEN duration1.seconds / 3600.0
+        WHEN duration2 < duration3 AND duration2 < duration4 THEN duration2.seconds / 3600.0
+        WHEN duration3 < duration4 THEN duration3.seconds / 3600.0
+           ELSE duration4.seconds / 3600.0
+    END AS ExposureDuration
+RETURN DISTINCT Person_in_contact, ROUND(SUM(ExposureDuration),4) AS Exposure
+ORDER BY Exposure DESC
