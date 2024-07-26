@@ -3,3 +3,19 @@
 // coincided with person p1. Express the duration in hours and rounded to four decimals. Return the 
 // result in table or text format
 
+MATCH (infected:Person {health_status:'Infected'})-[vi:VISITED]->(loc)<-[vh:VISITED]-(healthy:Person {health_status:'Healthy'}) 
+WHERE vi.start_time<=vh.end_time AND vi.end_time>=vh.start_time
+WITH vi,vh,infected,loc,healthy,
+     duration.between(vi.start_time, vi.end_time) AS duration1,
+     duration.between(vi.start_time, vh.end_time) AS duration2,
+     duration.between(vh.start_time, vh.end_time) AS duration3,
+     duration.between(vh.start_time,vi.end_time) AS duration4
+WITH infected.person_name AS Infected, healthy.person_name AS Person_in_contact, loc.name AS Location, 
+    CASE
+        WHEN duration1 < duration2 AND duration1 < duration3 AND duration1 < duration4 THEN duration1.seconds / 3600.0
+        WHEN duration2 < duration3 AND duration2 < duration4 THEN duration2.seconds / 3600.0
+        WHEN duration3 < duration4 THEN duration3.seconds / 3600.0
+           ELSE duration4.seconds / 3600.0
+    END AS ExposureDuration
+RETURN Infected, Person_in_contact, Location, ROUND(ExposureDuration,4) AS Exposure
+ORDER BY Exposure DESC
